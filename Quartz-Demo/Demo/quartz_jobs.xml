@@ -29,14 +29,14 @@
       <recover>false</recover>
     </job>
 
-    <!--定义示例任务1 触发器 每30秒执行一次DemoJob1任务-->
+    <!--定义示例任务1 触发器 每秒执行一次DemoJob1任务-->
     <trigger>
       <cron>
         <name>DemoJob1Trigger</name>
         <group>DeomJobTriggerGroup</group>
         <job-name>DemoJob1</job-name>
         <job-group>DeomJobGroup</job-group>
-        <cron-expression>0/3 * * * * ?</cron-expression>
+        <cron-expression>* * * * * ?</cron-expression>
       </cron>
     </trigger>
 
