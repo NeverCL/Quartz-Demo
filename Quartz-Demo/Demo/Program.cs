@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Specialized;
 using System.Threading;
 using Common.Logging;
 using Common.Logging.Simple;
@@ -13,8 +14,13 @@ namespace Demo
         static void Main(string[] args)
         {
             LogManager.Adapter = new ConsoleOutLoggerFactoryAdapter {Level = LogLevel.Info};  // 配置适配器
-            var factory = new StdSchedulerFactory();                    // 创建调度器工厂
-            var scheduler = factory.GetScheduler();                         // 创建调度器
+            var config = new NameValueCollection
+            {
+                {"quartz.plugin.xml.fileNames", "~/quartz_jobs.xml"},
+                {"quartz.plugin.xml.type", "Quartz.Plugin.Xml.XMLSchedulingDataProcessorPlugin, Quartz"}
+            };
+            var factory = new StdSchedulerFactory();                    // 创建调度器工厂(可以手动代码配置)
+            var scheduler = factory.GetScheduler();                         // 创建调度器(默认会读取quartz.config 配置文件)
             var sched1 = StdSchedulerFactory.GetDefaultScheduler();     // 快速获取调度器
             scheduler.ScheduleJob(new JobDetailImpl("jobName", typeof(MyJob))
                 , new SimpleTriggerImpl("triggerName", -1, TimeSpan.FromSeconds(1)));  // 快速执行简单Job
@@ -52,6 +58,22 @@ namespace Demo
         public void Execute(IJobExecutionContext context)
         {
             _log.Info("Hello World");  // DEBUG < INFO < WARN < ERROR < FATAL
+        }
+    }
+
+    class Job1:IJob
+    {
+        public void Execute(IJobExecutionContext context)
+        {
+            LogManager.GetLogger<Job1>().Info("Job1");
+        }
+    }
+
+    class Job2 : IJob
+    {
+        public void Execute(IJobExecutionContext context)
+        {
+            LogManager.GetLogger<Job2>().Info("Job2");
         }
     }
 }
